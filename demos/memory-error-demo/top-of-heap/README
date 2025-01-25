@@ -1,0 +1,48 @@
+DEMO Sequence
+
+1. Launch
+   - `make`
+   - `pwndbg demo`
+
+2. Show heap
+   - `start`
+
+3. Next: void *a = malloc(9);
+   - `n`
+   - `vis`
+   - `p a`
+     note where `a` is allocated
+
+4. Next: malloc(1);
+   - `n`
+   - `vis`
+     note that the minimal chunc size is 24 bytes + 8 bytes of metadata
+
+5. Next: malloc(0);
+   - `n`
+   - `vis`
+     note that this will actually allocate a new chunk
+
+6. Next: malloc(24);
+   - `n`
+   - `vis`
+     maximize the heap chunk size
+
+7. Next: malloc(25);
+   - `n`
+   - `vis`
+     this will create a chunk of 40 bytes + 8 bytes of metadata
+
+8. Next: free(a);
+   - `n`
+   - `vis`
+     note that `a` is freed, and check what happens in the chunk
+
+9. Next: void *b = malloc(9);
+   - `n`
+   - `vis`
+     note where `b` is allocated, which should be exactly where `a` was previously allocated
+   - `p b`
+   - `p a`
+     confirm that `b` and `a` are pointing to the same address
+

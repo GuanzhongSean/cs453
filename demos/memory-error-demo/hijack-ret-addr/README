@@ -1,0 +1,48 @@
+This demo is developed for educational purpose only
+
+- The code is developed on Ubuntu 22.04.2 LTS
+  with proper installation of related tooling
+  (e.g., build-essentials, python3, gdb).
+
+- It is highly advised that you try the code on a virtual machine instead of bare-metal.
+  Use it at your own risk!
+
+Steps for demonstration
+
+1. Understand the concept of shellcode
+   - Check shellcode.c
+   - Check compilation command in Makefile, understand the `-z execstack` flag
+
+2. Check the demo.c file, analyze the vulnerability
+
+3. Try to execute ./demo for a couple of times, with different inputs
+
+4. Try to see what will happen if we overflow the buffer
+   - `./gen.py probe`
+   - `xxd input`
+   - `gdb demo`, following are commands in GDB:
+     - `r < input`
+     - `info registers`
+     - check for values in rbp and rip
+       realize that we manage to override rbp, but not rip
+     - use `q` to exit GDB
+
+5. Ask the payload generator for a new payload
+   - `./gen.py rip 0x68` (0x68 might change)
+   - `xxd input`
+   - `gdb demo`
+     - `r < input`
+     - `info registers`
+       verify that the rip is pointing at 0x414141...
+    - use `q` to exit GDB
+
+6. Ask the payload generator for a shellcode
+   - First we need to get the buffer address in `gdb demo`
+     - `b vuln` --> this sets a breakpoint at function `vuln`
+     - `r`      --> we can run the program without giving it an input
+     - `p &buf` --> retrieve the address of buf
+     - use `q` to exit GDB
+   - `./gen.py exploit 0x68 <buf address (starting with 0x)>`
+   - `gdb demo`
+     - `r < input`
+     - verify that we see the list of files in the current directory in the output

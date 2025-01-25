@@ -1,0 +1,7 @@
+It is highly recommended that you try these demo on a Virtual Machine (VM)
+as they WILL change the security setting in your system and hence please
+DO NOT try them directly on your machine.
+
+The Vagrantfile alongside this README uses [Vagrant](https://developer.hashicorp.com/vagrant/docs/installation)
+to quickly populate a VM as well as to install some necessary tooling,
+consider using it for the experiment.
