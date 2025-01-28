@@ -1,0 +1,43 @@
+\documentclass[12pt]{article}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{hyperref}
+\usepackage{verbatim}
+
+\title{CS 453/698 Assignment 1 Responses}
+\author{Jiaze Xiao \\ WatIAM User ID: j76xiao \\ Student Number: 20933691}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Introduction}
+This document contains descriptions of the three exploits I implemented for A1. Each exploit targets a distinct vulnerability in the provided \texttt{pwgen.c} program to achieve a root shell.
+
+\section*{Exploit 1: Memory Attack}
+The exploit overflows the buffer \texttt{args\_message\_buffer} allocated for the \texttt{-e} flag input by:
+\begin{itemize}
+    \item Filling the buffer with \texttt{NOP}s and injecting the shellcode near the start.
+    \item Append format string after shellcode to fill the arbitrary  offset between the buffer and \texttt{rip} even the liminted input amount is not enough to overflow the buffer. User inputed filename will be triggered as format string in \\\texttt{sprintf(args\_message\_buffer, args.filename);}
+    \item Overwriting the return address with the buffer address to redirect execution to the injected shellcode.
+\end{itemize}
+The program is executed with a carefully crafted payload using the \texttt{-e} flag, leading to a root shell.
+
+\section*{Exploit 2: TOCTTOU Attack}
+The exploit:
+\begin{itemize}
+    \item Figures out a gap between the time-to-check in \texttt{check\_perms} and the time-to-use in \texttt{fill\_entropy} of the file \texttt{/tmp/pwgen\_random}: a user input blocking in \texttt{get\_entropy}.
+    \item Creates a symbolic link from \texttt{/tmp/pwgen\_random} to \texttt{/etc/shadow} during this gap. Wait for one second after the \texttt{pwgen} program is executed to ensure the time-to-check has passed.
+    \item Pass prepared malicious input with no password for root to the running \texttt{pwgen}.
+    \item \texttt{pwgen} writes the input to \texttt{/tmp/pwgen\_random} (symlink to \texttt{/tmp/pwgen\_random}), so that we can log in as root without password.
+\end{itemize}
+
+\section*{Exploit 3: Environment Variable Attack}
+\texttt{pwgen} determines the current user by checking the environment variable \texttt{HOME}. The exploit:
+\begin{itemize}
+    \item Sets the \texttt{HOME} environment variable to \texttt{/root}.
+    \item Executes \texttt{pwgen} with the \texttt{-w} flag to write the generated password to \texttt{/etc/shadow} and overwrite the current user(root)'s password.
+    \item Captures the generated password and uses it to log in as \texttt{root}.
+\end{itemize}
+
+\end{document}
