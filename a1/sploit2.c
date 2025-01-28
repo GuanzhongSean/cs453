@@ -1,8 +1,6 @@
 // Exploit 2: TOCTTOU Attack
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #define COMMAND_LENGTH 1024
