@@ -35,6 +35,7 @@ int main() {
   }
   strncpy(password, buffer + GENERATED_PASSWD_OFFSET, PASSWD_SZ);
   pclose(fp);
+  printf("Generated password for root: %s\n", password);
 
   // Use the password to gain root access
   char command[COMMAND_LENGTH];
