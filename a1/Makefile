@@ -1,8 +1,17 @@
-all: clean
-	pdflatex a1_responses.tex
-	zip -j a1.zip sploit*.c ../key* a1_responses.pdf
+CC = gcc
+CFLAGS = -Wall -ggdb
+OUTDIR = test
+
+SOURCES = $(wildcard sploit?.c)
+TARGETS = $(patsubst %.c,$(OUTDIR)/%,$(SOURCES))
+
+all: $(OUTDIR) $(TARGETS)
+
+$(OUTDIR):
+	mkdir -p $(OUTDIR)
+
+$(OUTDIR)/sploit%: sploit%.c
+	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -f a1.zip a1_responses.pdf a1_responses.aux a1_responses.log a1_responses.out
-
-.PHONY: all clean
+	rm -rf $(OUTDIR)
