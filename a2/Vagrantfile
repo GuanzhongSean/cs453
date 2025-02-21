@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
 
   # machine
   config.vm.provider "virtualbox" do |v|
-    v.cpus = 2
+    v.cpus = 4
     v.memory = 8192
   end
 
@@ -14,8 +14,8 @@ Vagrant.configure("2") do |config|
       apt-get update
       DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
       DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential wget gdb
-      wget https://github.com/pwndbg/pwndbg/releases/download/2024.08.29/pwndbg_2024.08.29_amd64.deb -O pwndbg.deb
-      dpkg -i pwndbg.deb
+      DEBIAN_FRONTEND=noninteractive git clone https://github.com/meng-xu-cs/cs453-program-analysis-platform.git
+      DEBIAN_FRONTEND=./cs453-program-analysis-platform/scripts/ugster-up.sh
     SHELL
   end
 end
