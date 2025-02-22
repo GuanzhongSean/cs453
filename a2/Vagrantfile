@@ -14,8 +14,7 @@ Vagrant.configure("2") do |config|
       apt-get update
       DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
       DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential wget gdb
-      DEBIAN_FRONTEND=noninteractive git clone https://github.com/meng-xu-cs/cs453-program-analysis-platform.git
-      DEBIAN_FRONTEND=./cs453-program-analysis-platform/scripts/ugster-up.sh
+      sudo -u vagrant git clone https://github.com/meng-xu-cs/cs453-program-analysis-platform.git /home/vagrant/cs453-program-analysis-platform
     SHELL
   end
 end
