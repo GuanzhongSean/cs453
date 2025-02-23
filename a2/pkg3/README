@@ -1,0 +1,1 @@
+This program exploits AFL++'s weakness in handling multi-stage constraints where input-dependent control flow and conditional checks prevent effective mutation-based exploration.
