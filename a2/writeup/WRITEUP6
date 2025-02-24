@@ -1,0 +1,54 @@
+# AFL++ Weakness Exploited: Execution Time Waste and Delayed Condition Constraints
+
+## 1. Description of the Bug
+
+- The program reads input from **stdin** and processes up to 10 bytes.
+- It defines a function pointer `crash_func` initialized to `safe_function()`.
+- **Artificial time-wasting loop:**
+  - A large loop (`100,000,000` iterations) modifies an unused variable `ch`, significantly increasing execution time for each input test.
+  - A temporary buffer prints a computed value, adding another unnecessary operation.
+- **Two-stage condition modification:**
+  - If the first two bytes match `'A'` and `'B'`, `crash_func` is updated to `abort()` and the expected values (`c1` and `c2`) change.
+  - If bytes at index `2` and `3` match the **modified** values, `crash_func()` is executed, leading to a crash.
+
+## 2. Why AFL++ Struggles
+
+### **(A) Reduced Execution Throughput Due to Time-Wasting Loop**
+
+- The artificial **delay prevents AFL++ from executing many test cases** in a given fuzzing time window.
+- Since AFL++ relies on running millions of iterations, **this time waste severely limits mutation exploration**.
+
+### **(B) Delayed Conditional Modification**
+
+- The input constraints change dynamically: passing the first check modifies expected values for the second check.
+- AFL++ mutates bytes **independently**, making it difficult to generate inputs that correctly transition between conditions.
+
+### **(C) Harder Path Exploration with Early Execution Delay**
+
+- The fuzzer's coverage-based guidance is disrupted because **most execution time is wasted before reaching the first conditional check**.
+- AFL++ may detect coverage at a slow rate, causing it to focus on unoptimized paths.
+
+## 3. Expected AFL++ Behavior
+
+- AFL++ will likely spend excessive time executing the **time-wasting loop** instead of making meaningful mutations.
+- It may find the first input condition (`'A'`, `'B'`) but **fail to mutate input efficiently to meet the second-stage condition**.
+- Since AFL++ prioritizes faster execution paths, it may **ignore this path altogether**, missing the crash condition entirely.
+
+## 4. Conclusion
+
+This program **exploits AFL++'s inefficiency with artificially delayed execution and sequential input dependencies**. The combination of **execution slowdown and condition modification** makes it difficult for AFL++ to explore the correct input space efficiently.
+
+## 5. How to Trigger the Bug Manually
+
+To manually trigger the crash, provide the following input sequence:
+
+```
+AByz
+```
+
+where:
+
+- `'A'`, `'B'` trigger `crash_func = abort();`
+- `'y'`, `'z'` execute `crash_func()`.
+
+Since the program **wastes significant execution time**, it may take much longer to reach the crash condition even with the correct input.

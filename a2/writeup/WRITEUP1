@@ -1,4 +1,40 @@
-This program demonstrates a multi-stage condition that requires very specific byte patterns:
-    - The first two bytes of input must be 'A' and 'B'. If matched, certain internal variables are changed (e.g., i becomes 42) and the next checks become 'C'/'D'.
-    - Only if the input length is exactly 42 and the third and fourth bytes match 'C' and 'D', the program calls abort() and crashes.
-AFL++ often struggles because it must first guess the correct initial bytes to unlock the deeper logic. If it never stumbles on 'A'/'B' together, it never discovers that the length requirement changes to 42, so it remains “stuck” in the shallow paths.
+# AFL++ Weakness Exploited: Length-Dependent Bug and Indirect Condition Modification
+
+## 1. Description of the Bug
+
+- The program takes input from **stdin** and stores it in a buffer.
+- It initially sets a function pointer (`crash_func`) to a safe function.
+- If the first two bytes of input are `'A'` and `'B'`, the program modifies internal variables:
+  - `c1` changes to `'y'`
+  - `c2` changes to `'z'`
+  - `i` (length condition) is updated from `4` to `999`
+  - `crash_func` is set to `abort()`
+- For the crash to happen, **the input length must exactly match `999`**, and the third and fourth bytes must match the new values (`'y'` and `'z'`).
+
+## 2. Why AFL++ Struggles
+
+### **Length-Dependent Mutation Problem**
+
+- AFL++ **prefers shorter inputs** and gradually mutates them.
+- Since the bug requires an **exact length of 999 bytes**, AFL++ is unlikely to reach it naturally.
+- Even if AFL++ finds the `"AB"` condition, it **may not realize that increasing input length is necessary**.
+
+## 3. Expected AFL++ Behavior
+
+- AFL++ may quickly find inputs that match `"AB"`, but since it prefers small test cases, it may fail to extend the input to 999 bytes.
+- It might explore different byte values for the third and fourth characters but **without reaching the correct state transition**.
+- If AFL++ does not generate an input of exactly 999 bytes, the bug will remain undetected.
+
+## 4. Conclusion
+
+This program **exploits a length-dependent crash that AFL++ is unlikely to discover** due to its mutation strategy. The **changing condition dependencies** further hinder AFL++ from generating valid crash-triggering inputs.
+
+## 5. How to Trigger the Bug Manually
+
+To manually trigger the crash, run the program and provide the following input:
+
+```
+AByz...(total length = 999 bytes)
+```
+
+where `AB` is at the start, `yz` is at positions 2 and 3, and the total input length is **exactly 999 bytes**.

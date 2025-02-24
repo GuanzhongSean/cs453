@@ -1,5 +1,50 @@
-In this program, each time the input contains the current sentinel character, we store sentinel into an array and then update it for the next round:
-    - Initially, sentinel = 'A'.
-    - If a byte matches sentinel, we increment an internal pointer and then do sentinel += cur * (i + 1) * 2.
-    - Hence, the next required sentinel value depends on which bytes were matched before and at which input index they occurred.
-This makes the correct sequence of bytes highly non-obvious, since each successful match moves the goal post for the next match in a way that local, random mutations are unlikely to discover quickly.
+# AFL++ Weakness Exploited: Dynamic Sentinel Sequence Constraint
+
+## 1. Description of the Bug
+
+- The program reads input from **stdin** and processes it character by character.
+- A **sentinel character** starts at `'A'` and changes dynamically based on input position.
+- If an input byte matches the sentinel, the program writes a value into a **buffer of pointers**.
+- The sentinel **evolves in a non-trivial way**: `sentinel += cur * (i + 1) * 2`, making it highly unlikely for AFL++ to predict the next required character.
+- Since `buffer[cur]` is modified without bounds checking, this could lead to an out-of-bounds write if `cur` exceeds 4.
+
+## 2. Why AFL++ Struggles
+
+### **(A) Dynamic Sentinel Evolution**
+
+- Each time a matching character is found, the **sentinel value updates in a complex way**.
+- AFL++ **does not track dependencies between past and future input bytes**, making it unlikely to produce inputs that follow the required sequence.
+
+### **(B) Multi-Step Input Dependency**
+
+- The input needs to **sequentially match the evolving sentinel values**, which depend on position and previous inputs.
+- Since AFL++ mutates input **without context-aware tracking**, it will struggle to evolve the required input sequence.
+
+### **(C) Pointer Modification via Unchecked Writes**
+
+- The program modifies `buffer[cur]` based on conditions that are **data-dependent**, making it possible to trigger unintended memory corruption.
+- AFL++ is **effective at detecting direct buffer overflows**, but **when pointer writes depend on multiple conditions, detection becomes difficult**.
+
+### **(D) Input Sequence Resetting**
+
+- If an incorrect character appears in the input, `cur` resets to `0`, forcing AFL++ to restart input discovery from the beginning. This disrupts incremental mutation strategies.
+
+## 3. Expected AFL++ Behavior
+
+- AFL++ may generate inputs that trigger the **first sentinel match**, but it will likely fail to mutate input correctly to continue passing later checks.
+- Due to the **compounding changes to `sentinel`**, random mutations are unlikely to generate the correct sequence.
+- Without **symbolic execution or guided solving**, AFL++ will struggle to produce inputs that result in a memory violation.
+
+## 4. Conclusion
+
+This program **exploits AFL++'s weakness in handling multi-step sentinel-based input checks**, making it difficult for the fuzzer to mutate inputs that satisfy the dynamically evolving constraints.
+
+## 5. How to Trigger the Bug Manually
+
+To manually trigger unexpected behavior, provide an input sequence that follows the sentinel evolution pattern, for example:
+
+```
+ACK]}
+```
+
+Since the exact values are position-dependent, you must compute them using the formula: `sentinel += cur * (i + 1) * 2`.

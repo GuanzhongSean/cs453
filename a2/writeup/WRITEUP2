@@ -1,0 +1,47 @@
+# AFL++ Weakness Exploited: Arithmetic Constraints
+
+## 1. Description of the Bug
+
+- The program reads input from **stdin** and extracts **numeric sequences**.
+- It calculates the **product** of extracted numbers.
+- If the product is divisible by `MAGIC1` (698897), it assigns `abort()` to the function pointer.
+- If the product is also divisible by `MAGIC2` (357407), it **calls the function pointer**, leading to a crash.
+- Both two magic number are product of two prime numbers.
+
+## 2. Why AFL++ Struggles
+
+### **(A) Highly Unlikely Input Mutation**
+
+- AFL++ relies on **byte-wise mutations** but does not understand mathematical properties like prime factorization.
+- The probability of randomly generating an input where extracted numbers multiply to a **multiple of two specific magic numbers** is extremely low.
+- AFL++ might concate two of my inputs that each forms the multiplates of `MAGIC1` and `MAGIC2` (used to cover 100% branches). However, the inputs are designed to overflow.
+
+### **(B) Lack of Arithmetic Awareness**
+
+- AFL++ does not **reason about arithmetic operations**, meaning it cannot actively guide mutations to satisfy the modular conditions.
+- Unlike simple string comparisons (`input[i] == 'A'`), the fuzzer cannot effectively infer that certain values must be present in specific positions to form the correct product.
+
+### **(C) Non-Contiguous Input Dependency**
+
+- The bug depends on multiple numbers spread across the input, meaning AFL++ must generate an input with **specific digits in non-adjacent positions**.
+- Since AFL++ mutates bytes **independently**, it is unlikely to produce structured numeric sequences that multiply correctly.
+
+## 3. Expected AFL++ Behavior
+
+- AFL++ may mutate digits in the input but will likely fail to produce numbers that meet the divisibility conditions.
+- Even if one magic number condition is met, the second condition adds another layer of difficulty, making a successful fuzzing attempt improbable.
+- Without **guided symbolic execution**, AFL++ is unlikely to craft the precise input needed to trigger the bug.
+
+## 4. Conclusion
+
+This program **exploits AFL++'s weakness in handling arithmetic constraints**. The **requirement of a specific numeric product** makes it highly resistant to random mutation-based fuzzing.
+
+## 5. How to Trigger the Bug Manually
+
+To manually trigger the crash, provide an input containing numbers that multiply to **a multiple of both MAGIC1 (698897) and MAGIC2 (357407)**, such as:
+
+```
+698897*357407
+```
+
+This will ensure the magic product meets both conditions, triggering `abort()`.

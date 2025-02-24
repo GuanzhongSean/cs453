@@ -1,0 +1,47 @@
+# AFL++ Weakness Exploited: Two-Stage Input Matching Constraint
+
+## 1. Description of the Bug
+
+- The program reads input from **stdin** and processes it as a 10-byte sequence.
+- A function pointer `crash_func` starts as `safe_function()` and is updated to `abort()` if the **first five bytes** match `'A'`, `'B'`, `'C'`, `'D'`, `'E'`.
+- Once this condition is met, the variables `c1, c2, c3, c4, c5` are **modified** to a different set of values (`\x05, \x00, \x7F, \x1A, \x0E`).
+- The second condition checks if **bytes 5-9 match the updated values**.
+- If both conditions are met, `crash_func()` is called, causing a crash.
+
+## 2. Why AFL++ Struggles
+
+### **(A) Two-Stage Sequential Dependency**
+
+- The **first condition must be satisfied first** to modify `c1, c2, c3, c4, c5`.
+- Only then can the **second condition be satisfied**.
+- AFL++ mutates input **independently**, making it unlikely to generate an input where both stages align correctly.
+
+### **(B) Dynamic Condition Modification**
+
+- The expected values for the second stage **depend on the first match**.
+- AFL++ does not **retain contextual dependencies**, so even if it finds the first stage, it will likely fail to mutate input correctly for the second stage.
+
+### **(C) Byte-Wise Mutation Limitation**
+
+- AFL++ **mutates bytes in isolation**, so it may discover the first five-byte match but fail to adjust subsequent bytes accordingly.
+- The second-stage bytes must be precisely `\x05, \x00, \x7F, \x1A, \x0E`, which is highly unlikely to emerge from random mutations.
+
+## 3. Expected AFL++ Behavior
+
+- AFL++ may find an input that satisfies the first condition (`'ABCDE'`) but will likely fail to mutate input correctly for the second condition.
+- If AFL++ finds the correct second-stage values first, it won’t trigger the first-stage variable modification, **making the crash unreachable**.
+- Without **constraint-solving or symbolic execution**, AFL++ will struggle to explore both stages in sequence.
+
+## 4. Conclusion
+
+This program **exploits AFL++'s weakness in handling sequential input constraints where conditions modify later checks**. The **adaptive variable reassignment disrupts AFL++’s mutation strategies**, making the crash nearly impossible to find.
+
+## 5. How to Trigger the Bug Manually
+
+To manually trigger the crash, provide an exact 10-byte input sequence:
+
+```
+ABCDE\x05\x00\x7F\x1A\x0E
+```
+
+Since the second half depends on the first match, **AFL++ is highly unlikely to generate this input naturally**.

@@ -1,1 +1,1 @@
-Uses a dynamic sentinel approach that modifies the required matching bytes, complicating coverage-based fuzzing paths for AFL++.
+AFL++ struggles with multi-step dynamic sentinel-based input validation, where dynamically evolving conditions make it difficult to generate valid mutation sequences required to trigger a memory violation.

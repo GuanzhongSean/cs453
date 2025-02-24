@@ -1,1 +1,1 @@
-Uses a dynamic sentinel approach that modifies the required matching bytes, complicating coverage-based fuzzing paths for AFL++.
+AFL++ struggles with strict sentinel sequence constraints, where a specific, unbroken sequence of 43 characters must be matched precisely, resetting progress upon any incorrect mutation.

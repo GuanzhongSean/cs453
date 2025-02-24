@@ -1,0 +1,47 @@
+# AFL++ Weakness Exploited: Complex Sentinel Sequence Constraint
+
+## 1. Description of the Bug
+
+- The program reads input from **stdin** and processes it character by character.
+- It compares the input against a **hardcoded sentinel sequence** of 43 characters.
+- The function pointer `crash_func` starts as `safe_function()` and is updated to `abort()` upon matching the first sentinel character.
+- Each subsequent character must match the next entry in the sentinel sequence to maintain progress.
+- If an incorrect character appears at any stage, **progress is reset to the beginning**.
+- If all 43 characters are matched successfully, the function pointer executes `abort()`, causing a crash.
+
+## 2. Why AFL++ Struggles
+
+### **(A) Extremely Low Probability of Random Mutation Success**
+
+- AFL++ relies on **randomized byte-wise mutations**, making it highly unlikely to generate a 43-character-long matching sequence.
+- The required sequence includes **special characters and non-alphabetic symbols**, further complicating AFL++’s ability to mutate toward a valid input.
+
+### **(B) Full Sequence Requirement with No Partial Progress**
+
+- If **any incorrect byte appears**, the program resets progress (`cur = 0`).
+- This prevents AFL++ from discovering the sequence incrementally, as each incorrect mutation causes a restart.
+
+### **(C) Lack of Fuzzing Guidance for Non-Traditional Constraints**
+
+- AFL++ is effective when **bit flips or small mutations lead to gradual coverage improvements**.
+- However, in this case, **no intermediate coverage benefit exists**—either the entire sentinel sequence is matched, or progress is reset.
+
+## 3. Expected AFL++ Behavior
+
+- AFL++ may discover the first correct character by chance, assigning `abort()` to `crash_func`, but **will struggle to maintain correct mutations** beyond the first step.
+- If AFL++ generates even a single incorrect byte at any position, it will reset progress and likely fail to reach the crash condition.
+- Without **symbolic execution or dictionary-based fuzzing**, AFL++ is unlikely to generate the precise 43-character input required.
+
+## 4. Conclusion
+
+This program **exploits AFL++'s weakness in handling sequential character constraints**. The **requirement of a strict, unbroken sequence** makes it highly resistant to the fuzzer’s standard mutation strategies.
+
+## 5. How to Trigger the Bug Manually
+
+To manually trigger the crash, provide an input that exactly matches the sentinel sequence:
+
+```
+1AQ@#$!@#$#@DA{>_+#$KF<EP{P./{#!P(})}}cx,_a
+```
+
+Since the **entire sequence must match**, AFL++ is highly unlikely to generate this input through mutation.

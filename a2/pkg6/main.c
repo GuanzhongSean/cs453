@@ -7,11 +7,11 @@ int puts(const char *buffer);
 
 /* exposed interfaces */
 inline __attribute__((always_inline)) ssize_t in(void *buffer, size_t count) {
-  return read(0, buffer, count);
+	return read(0, buffer, count);
 }
 
 inline __attribute__((always_inline)) int out(const char *buffer) {
-  return puts(buffer);
+	return puts(buffer);
 }
 
 void abort(void);
@@ -21,30 +21,30 @@ void safe_function() { /* Do nothing */ }
 #define MAX_INPUT_SIZE 10
 
 int main(void) {
-  char input[MAX_INPUT_SIZE] = {0};
-  int len = in(input, MAX_INPUT_SIZE);
+	char input[MAX_INPUT_SIZE] = {0};
+	int len = in(input, MAX_INPUT_SIZE);
 
-  void (*crash_func)() = safe_function;
+	void (*crash_func)() = safe_function;
 
-  // wasting time
-  char ch;
-  for (unsigned long i = 0; i < 100000000UL; i++) {
-    ch += i;
-  }
-  char tmp[2] = {ch, 0};
-  out(tmp);
+	// wasting time
+	char ch;
+	for (unsigned long i = 0; i < 100000000UL; i++) {
+		ch += i;
+	}
+	char tmp[2] = {ch, 0};
+	out(tmp);
 
-  char c1 = 'A', c2 = 'B';
-  if (len >= 2 && input[0] == c1 && input[1] == c2) {
-    crash_func = abort;
-    c1 = 'y';
-    c2 = 'z';
-  }
+	char c1 = 'A', c2 = 'B';
+	if (len >= 2 && input[0] == c1 && input[1] == c2) {
+		crash_func = abort;
+		c1 = 'y';
+		c2 = 'z';
+	}
 
-  if (len >= 4 && input[2] == c1 && input[3] == c2) {
-    crash_func();
-  }
+	if (len >= 4 && input[2] == c1 && input[3] == c2) {
+		crash_func();
+	}
 
-  out(input);
-  return 0;
+	out(input);
+	return 0;
 }

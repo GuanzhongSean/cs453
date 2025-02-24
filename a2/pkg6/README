@@ -1,1 +1,1 @@
-Uses multi-phase "magic byte" checks and a hidden length requirement, making it difficult for AFL++ to uncover the crash path.
+AFL++ struggles with artificial execution delays and sequential condition modifications, reducing fuzzing efficiency and making it difficult to mutate inputs correctly to reach the crash.
