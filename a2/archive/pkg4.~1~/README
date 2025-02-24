@@ -1,0 +1,1 @@
+Uses a dynamic sentinel approach that modifies the required matching bytes, complicating coverage-based fuzzing paths for AFL++.

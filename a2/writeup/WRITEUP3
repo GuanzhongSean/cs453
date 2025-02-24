@@ -1,0 +1,5 @@
+In this program, each time the input contains the current sentinel character, we store sentinel into an array and then update it for the next round:
+    - Initially, sentinel = 'A'.
+    - If a byte matches sentinel, we increment an internal pointer and then do sentinel += cur * (i + 1) * 2.
+    - Hence, the next required sentinel value depends on which bytes were matched before and at which input index they occurred.
+This makes the correct sequence of bytes highly non-obvious, since each successful match moves the goal post for the next match in a way that local, random mutations are unlikely to discover quickly.

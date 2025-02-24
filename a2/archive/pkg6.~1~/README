@@ -1,0 +1,1 @@
+Uses multi-phase "magic byte" checks and a hidden length requirement, making it difficult for AFL++ to uncover the crash path.

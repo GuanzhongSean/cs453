@@ -1,0 +1,4 @@
+This program demonstrates a multi-stage condition that requires very specific byte patterns:
+    - The first two bytes of input must be 'A' and 'B'. If matched, certain internal variables are changed (e.g., i becomes 42) and the next checks become 'C'/'D'.
+    - Only if the input length is exactly 42 and the third and fourth bytes match 'C' and 'D', the program calls abort() and crashes.
+AFL++ often struggles because it must first guess the correct initial bytes to unlock the deeper logic. If it never stumbles on 'A'/'B' together, it never discovers that the length requirement changes to 42, so it remains “stuck” in the shallow paths.
