@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include <string.h>
 #include <sys/types.h>
 
 /* external interfaces */
@@ -20,6 +19,8 @@ void abort(void);
 void safe_function() { /* Do nothing */ }
 
 #define MAX_INPUT_SIZE 1024
+#define MAGIC1 698897 // 701 * 997
+#define MAGIC2 357407 // 419 * 853
 
 int main(void) {
   char input[MAX_INPUT_SIZE] = {0};
@@ -27,20 +28,26 @@ int main(void) {
 
   void (*crash_func)() = safe_function;
 
-  char c1 = 'A', c2 = 'B';
-  int i = 4;
-  if (len >= 2 && input[0] == c1 && input[1] == c2) {
-    crash_func = abort;
-    c1 = 'C';
-    c2 = 'D';
-    i = 42;
+  unsigned long magic = 1;
+  int cur = 0;
+  for (int i = 0; i < len; i++) {
+    if ('0' <= input[i] && input[i] <= '9') {
+      cur = cur * 10 + input[i] - '0';
+    } else {
+      if (cur > 0)
+        magic *= cur;
+      cur = 0;
+    }
   }
-
-  if (len == i && input[2] == c1 && input[3] == c2 &&
-      (i == 42
-           ? strcmp(input, "ABCD!Q@#$!@#$#@DA{>_+#$KF<EP{P{#!P(})}}cx,") == 0
-           : 1)) {
-    crash_func();
+  if (cur > 0)
+    magic *= cur;
+  if (magic > 0) {
+    if (magic % MAGIC1 == 0) {
+      crash_func = abort;
+    }
+    if (magic % MAGIC2 == 0) {
+      crash_func();
+    }
   }
 
   out(input);

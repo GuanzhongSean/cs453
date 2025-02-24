@@ -12,6 +12,7 @@ WKS=output-afl
 CMD=$(cat <<END
     rm -rf ${WKS} && mkdir ${WKS} &&
     afl-cc main.c -o ${WKS}/main &&
+    export AFL_BENCH_UNTIL_CRASH=1 &&
     timeout 16m afl-fuzz -i input -o ${WKS}/output -- ${WKS}/main
 END
 )

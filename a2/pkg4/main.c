@@ -25,20 +25,25 @@ int main(void) {
   int len = in(input, MAX_INPUT_SIZE);
 
   void (*crash_func)() = safe_function;
+  char sentinal[] = "1AQ@#$!@#$#@DA{>_+#$KF<EP{P./{#!P(})}}cx,_a";
+  int cur = 0;
 
-  char c1 = 'A', c2 = 'B';
-  int i = 4;
-  if (len >= 2 && input[0] == c1 && input[1] == c2) {
+  if (len > cur && input[cur] == sentinal[0]) {
+    cur++;
     crash_func = abort;
-    c1 = 'y';
-    c2 = 'z';
-    i = 999;
   }
-
-  if (len == i && input[2] == c1 && input[3] == c2) {
+  for (int i = 0; i < 41; i++) {
+    if (len > cur && input[cur] == sentinal[i + 1]) {
+      cur++;
+    } else {
+      cur = 0;
+    }
+  }
+  if (len > cur && input[cur] == sentinal[42]) {
     crash_func();
   }
 
   out(input);
+
   return 0;
 }

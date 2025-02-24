@@ -18,7 +18,7 @@ void abort(void);
 
 void safe_function() { /* Do nothing */ }
 
-#define MAX_INPUT_SIZE 1024
+#define MAX_INPUT_SIZE 10
 
 int main(void) {
   char input[MAX_INPUT_SIZE] = {0};
@@ -26,16 +26,22 @@ int main(void) {
 
   void (*crash_func)() = safe_function;
 
+  // wasting time
+  char ch;
+  for (unsigned long i = 0; i < 100000000UL; i++) {
+    ch += i;
+  }
+  char tmp[2] = {ch, 0};
+  out(tmp);
+
   char c1 = 'A', c2 = 'B';
-  int i = 4;
   if (len >= 2 && input[0] == c1 && input[1] == c2) {
     crash_func = abort;
     c1 = 'y';
     c2 = 'z';
-    i = 999;
   }
 
-  if (len == i && input[2] == c1 && input[3] == c2) {
+  if (len >= 4 && input[2] == c1 && input[3] == c2) {
     crash_func();
   }
 
