@@ -9,7 +9,7 @@
 int main() {
 	char flag[FLAG_SIZE];
 
-	// Use syscall(SYS_open) instead of open()
+	// Use syscall(SYS_open) instead of open() which wraps syscall(SYS_openat)
 	int fd = syscall(SYS_open, "./flag", O_RDONLY, 0);
 	if (fd < 0) {
 		perror("open");
