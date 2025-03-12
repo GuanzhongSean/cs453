@@ -16,7 +16,7 @@ sploit3: sploit3.c
 	$(CC) $(CFLAGS) -m32 $< -o $@
 
 sploit4: sploit4.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@ -luring
 
 clean:
 	rm -rf $(TARGETS) j76xiao/ a3.zip
