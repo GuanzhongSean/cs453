@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
       apt-get update
       DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
       DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential wget gdb
-      sudo -u vagrant wget http://ugster72d.student.cs.uwaterloo.ca/a3/a3_setup.sh && chmod +x a3_setup.sh && ./a3_setup.sh
+      sudo -u vagrant wget http://ugster72d.student.cs.uwaterloo.ca/a3/a3_setup.sh && sudo -u vagrant chmod +x a3_setup.sh && sudo -u vagrant ./a3_setup.sh
     SHELL
   end
 end
