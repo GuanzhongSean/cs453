@@ -23,6 +23,7 @@ submit: clean
 	zip -qr - j76xiao/ | curl --data-binary @- $(URL)
 
 zip:
+	pdflatex write-up.tex
 	zip -r91 a3.zip sploit?.c Makefile write-up.pdf
 
 .PHONY: all clean submit zip
