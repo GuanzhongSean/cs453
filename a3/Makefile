@@ -17,13 +17,13 @@ sploitB: sploitB.c
 clean:
 	rm -rf $(TARGETS) j76xiao/ a3.zip
 
-submit: clean
+zip: clean
 	mkdir j76xiao
-	cp sploit[1-4].c Makefile j76xiao/
+	pdflatex write-up.tex
+	cp sploit[1-4].c Makefile write-up.pdf j76xiao/
+	zip -rj91 a3.zip j76xiao/
+
+submit: zip
 	zip -qr - j76xiao/ | curl --data-binary @- $(URL)
 
-zip:
-	pdflatex write-up.tex
-	zip -r91 a3.zip sploit[1-4].c Makefile write-up.pdf
-
-.PHONY: all clean submit zip
+.PHONY: all clean zip submit
