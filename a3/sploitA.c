@@ -62,7 +62,6 @@ int main(void) {
 	}
 
 	/* Fetch pointers into the SQ and CQ rings based on offsets in params. */
-	unsigned *sq_head = (unsigned *)((char *)sq_ring + params.sq_off.head);
 	unsigned *sq_tail = (unsigned *)((char *)sq_ring + params.sq_off.tail);
 	unsigned *sq_ring_mask =
 		(unsigned *)((char *)sq_ring + params.sq_off.ring_mask);
