@@ -24,6 +24,6 @@ submit: clean
 
 zip:
 	pdflatex write-up.tex
-	zip -r91 a3.zip sploit?.c Makefile write-up.pdf
+	zip -r91 a3.zip sploit[1-4].c Makefile write-up.pdf
 
 .PHONY: all clean submit zip
