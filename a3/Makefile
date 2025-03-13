@@ -4,6 +4,8 @@ CFLAGS = -Wall -ggdb -static
 SOURCES = $(wildcard sploit?.c)
 TARGETS = $(patsubst %.c,%,$(SOURCES))
 
+URL := ugster72c.student.cs.uwaterloo.ca:9000/submit
+
 all: $(TARGETS)
 
 sploit3: sploit3.c
@@ -18,9 +20,9 @@ clean:
 submit: clean
 	mkdir j76xiao
 	cp sploit[1-4].c Makefile j76xiao/
-	zip -qr - j76xiao/ | curl --data-binary @- ugster72c.student.cs.uwaterloo.ca:9000/submit
+	zip -qr - j76xiao/ | curl --data-binary @- $(URL)
 
 zip:
 	zip -r91 a3.zip sploit?.c Makefile write-up.pdf
 
-.PHONY: all clean submit
+.PHONY: all clean submit zip
