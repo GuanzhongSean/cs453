@@ -1,0 +1,109 @@
+[
+  {
+    "args": [
+      "register",
+      "test1"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFW9mz4qwMzpQvR/tKtt7hLARNuGkYjfCBqrj/oksiFJ naruto@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test1"
+    ],
+    "data": "6j6/fy/9tmuywlTNyPUq8B1BeFHBnpX6w3LMoBoUboIVe3ulMYntBH7Cz6oi+9bCZ9SUuq31ddYDCxAtrslMBw==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test2"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINdp4Fa3rpSGvT8P/kt6L5CoDaMsXj3FZfTf3DqApFaT naruto@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test2"
+    ],
+    "data": "SL+jIkwTSfVnHLyP1XavSQQgp2y42e8Ntertmwv0dFD5cPfnt54rTNdsNHJOYAtarzeU1PVmTuJrJKjseLFQAw==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test3"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINFJ9/u73UkZhe7RPSucM99MPnrfS1VVpfSvKrzAFEbd naruto@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test3"
+    ],
+    "data": "0fd3B83vzXeGMnR+FYhP1ADF9wD4gCKrCkLnmW7UQoGtVaQrH23sKiRx4bmY8+rhxIgV3eItCKfJs3A7euBkCQ==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test4"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFNA17Coul03/KlnIYICKvPk0hwWSGdNEb2+/NT5LcSB naruto@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test4"
+    ],
+    "data": "Zpo4ijvGAdSTIzUOQBLE01u6Z2396VKmGRrrrqwNsptoE/K0Exxeuwy1lMoSIzBsepEu1NipPd2brvAmnCDNAA==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test5"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII6VDXGx2Zyug5p5V1u34IJ+lZWG94hYAuABgsod/IGj naruto@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test5"
+    ],
+    "data": "GczbfSob7/x1x7JDRUU4Z+sVmIrWHEanVV1K76wHrh3KHnqckjfIWV8NkANOvPLa0B64bRo9dka9DrUQ71lHAg==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test6"
+    ],
+    "error": "Unauthorized UID",
+    "status": 403
+  },
+  {
+    "args": [
+      "register",
+      "test6"
+    ],
+    "error": "Unauthorized UID",
+    "status": 403
+  }
+]
+

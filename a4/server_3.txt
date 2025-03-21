@@ -1,0 +1,108 @@
+[
+  {
+    "args": [
+      "register",
+      "test1"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINa28FkCEVlkeak57tSmdp680clF4gDouNTZzh21rDU0 kakashi@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test1"
+    ],
+    "data": "4CDLg+B4MVuG/rkBmqtRDtGTarUvasgIp63berzp94l3O4iker8TjjV+bCToQwWHRT0NpDzTXSdvRR6gcFH0BQ==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test2"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJWXYJsSE2Nn84dE+ns1v7A5YFD2Eg35FLbfrl8b6xzF kakashi@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test2"
+    ],
+    "data": "7EKSBnWcS8idYxLxItmovpCKfNVI6/ypF7ni8D0ESsX5JtNDgqjy2KEtzmfrhioKfbfcg/96WPs+Mt46Q5+2CA==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test3"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICftfCVCrZthekJm8rFFlfCsrd+LE0er2TQh0QiOXL5U kakashi@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test3"
+    ],
+    "data": "NtpsDs6kHJfFkJyrBDenCfnaofsRdu3EwQE9gDB9b24CuxHHKtb0dAtEzfLuC1fXvki35ZJ+I1CKYH1Pc1xPBQ==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test4"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSlBMk6C0Nn71g4J/oDtYL8VECDIR3mIZrIDYrD+rpU kakashi@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test4"
+    ],
+    "data": "Jd8BOD9TURFAfFHPCq3smE8zDRwr4SfOfOmYrMysbBQtDfa9bJG0n5+8K3Xm4ppzou7elmYf3UwLXtNKCg0AAg==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test5"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFpOHL7UnwJxhE4k5GwNRdUF+W9IWkhMNpAq6UmvMYNw kakashi@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test5"
+    ],
+    "data": "F7ykYc+ef3uGEdAAww5r5/efXu6HSFotwK4Qqti49z2wAMDPYaqp09qF1+CpxKfZAPKi9IxZgfxXastU7QT/BQ==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test6"
+    ],
+    "error": "Unauthorized UID",
+    "status": 403
+  },
+  {
+    "args": [
+      "login",
+      "test6"
+    ],
+    "error": "Unauthorized UID",
+    "status": 403
+  }
+]

@@ -1,0 +1,108 @@
+[
+  {
+    "args": [
+      "register",
+      "test1"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE7XpKeJZF/nkzvKEfGouFbyRdq0B5RvVQAuWJl4JrG5 sasuke@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test1"
+    ],
+    "data": "TwlO29XCDeHK6gJJtpy68JHo0mEmwm8ADBpfzG3/spE6D+0p94D7uS7vmOIc8yfElw4hNPyS4+vWt5QjudZeDw==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test2"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMQFGt4HUIq4eeZekYCOdnZkfeIbvrUEKJAbca6F0k+5 sasuke@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test2"
+    ],
+    "data": "v/6X2fI/sVFvU5u6VCZxApU/7HdclOAtgDThl5Um4qQHwnQEiPoS68GTGyDB8MeBmCsQe07sHS2W5EvwVZwcBQ==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test3"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIfCj+pgrot4KMR23Kz1LHhSRR6fRGhRJXTG9DtIE8yv sasuke@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test3"
+    ],
+    "data": "8Jl8ZaDIpNxnqQurQYKMX9l6PCllD2VekQIuJQ60giOxpRVkGGSvHx5jL6rPH5X0uVSkAR4DMQDnzlafTQhXBw==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test4"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICB0s4qkLRujfApYQlNbHSYiN39gneNju9lse5MevdsA sasuke@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test4"
+    ],
+    "data": "I1/konE8tocJ6AtNt58chw9vsXKIBWqibplGcCFr0QRbnkvuCfIFGKmZS5GBxQ4uAGrres7TBFNSHdUQz2GlAw==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test5"
+    ],
+    "data": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIilONIeUNHTNsn2I5HuEftkhAzQ7IdIg9ZWcpDjkq3v sasuke@assignment4",
+    "message": "registration completed",
+    "status": 200
+  },
+  {
+    "args": [
+      "login",
+      "test5"
+    ],
+    "data": "McU96dubN2m+j40QazLTwnQYb+1WQ7ShLkPEgMmqEwnZ5ItTiZZffoMwdY28PgAarSFmc8W47149lyd0YQ1JDw==",
+    "message": "login successful",
+    "status": 200
+  },
+  {
+    "args": [
+      "register",
+      "test6"
+    ],
+    "error": "Unauthorized UID",
+    "status": 403
+  },
+  {
+    "args": [
+      "login",
+      "test6"
+    ],
+    "error": "Unauthorized UID",
+    "status": 403
+  }
+]
