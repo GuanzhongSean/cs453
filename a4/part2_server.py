@@ -4,7 +4,6 @@ from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.hazmat.backends import default_backend
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 1024
 
 ALLOWED_UIDS = {"test1", "test2", "test3", "test4", "test5"}
 user_keys = {}
@@ -77,7 +76,6 @@ def register(uid):
         "status": 200,
         "message": "Registration successful"
     })
-
     return f"Registration for {uid} successful.\n", 200
 
 
