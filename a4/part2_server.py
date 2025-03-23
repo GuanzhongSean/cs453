@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.hazmat.backends import default_backend
+import base64
 
 app = Flask(__name__)
 
@@ -73,6 +74,7 @@ def register(uid):
     user_keys[uid] = public_key
     actions_log.append({
         "args": ["register", uid],
+        "data": pubkey_raw.decode("utf-8"),
         "status": 200,
         "message": "Registration successful"
     })
@@ -119,6 +121,7 @@ def login(uid):
 
     actions_log.append({
         "args": ["login", uid],
+        "data": base64.b64encode(signature).decode("utf-8"),
         "status": 200,
         "message": "Login successful"
     })
