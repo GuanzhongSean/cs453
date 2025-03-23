@@ -5,8 +5,8 @@
 # For this assignment, we are not using the ugster system. We will be playing around with
 # servers, such as creating them, accessing them and attacking them simply via python scripts.
 #
-# The file you are currently viewing is Bash-based client to assist you with 
-# the building and attack modules required to complet your assignment. 
+# The file you are currently viewing is Bash-based client to assist you with
+# the building and attack modules required to complete your assignment.
 # This script is designed for a UNIX-like system (e.g., Ubuntu,
 # MacOS, or WSL on Windows) with `bash`, `curl`, and `ssh-keygen` available.
 #
@@ -16,10 +16,11 @@
 # - check its help message `./portal_a4.sh help`
 
 # course variables (SET BY USERS)
-USR_DEFAULT=""
-KEY_DEFAULT=""
+USR_DEFAULT="j76xiao"
+KEY_DIR="./.ssh"
+KEY_DEFAULT="${KEY_DIR}/id"
 
-# course variables (SET BY ADMIN) 
+# course variables (SET BY ADMIN)
 GATEWAY=http://localhost:8000
 NAMESPACE=assignment4
 
@@ -63,19 +64,27 @@ EOF
 
 # command (special): generate a key pair and register a user with the public key
 function cmd_register() {
+  mkdir -p "${KEY_DIR}"
   ssh-keygen -t ed25519 -C "${USR}@${NAMESPACE}" -f "${KEY}_$2" -P ""
   curl -s "${GATEWAY}/$1/$2" -d @"${KEY}_$2.pub"
-  echo ""
-  echo "!!! IMPORTANT !!!"
-  echo "- Please keep your private key in a safe place."
-  echo "- If you lose it, you will LOSE ACCESS TO THE SYSTEM FOREVER."
+
+  # Check the response and provide feedback
+  if [[ $? -eq 0 ]]; then
+    echo ""
+    echo "!!! IMPORTANT !!!"
+    echo "- Please keep your private key in a safe place."
+    echo "- If you lose it, you will LOSE ACCESS TO THE SYSTEM FOREVER."
+  else
+    echo "Error in sending request."
+    exit 1
+  fi
 }
 
 # command (proxy): run a generic query via proxy
 function cmd_login() {
   python3 generate_sig.py "${KEY}_$2"
   curl -s -X POST --data-binary @signature_"$2".bin "${GATEWAY}/$1/$2"
-  
+
   # Check the response and provide feedback
   if [[ $? -eq 0 ]]; then
     echo "Request to server was successful."
@@ -98,7 +107,6 @@ function cmd_generate_userid_signature() {
 function cmd_attack() {
   curl -s -X POST "${GATEWAY}/$1/$2"
 }
-
 
 # main entrypoint
 if [ -n "$1" ]; then

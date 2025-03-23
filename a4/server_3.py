@@ -15,9 +15,9 @@ user_keys = {"test1": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINa28FkCEVlkeak57tSmd
              }
 allowed_uids = {"test1", "test2", "test3", "test4", "test5"}
 
-# Lets assume here that the registration was done properly. Since we have all the users registered, the implementation has been removed for brevity.
 
-
+# Lets assume here that the registration was done properly. Since we have all the users registered,
+# the implementation has been removed for brevity.
 @app.route("/login/<uid>", methods=["POST"])
 def login(uid):
     # Assume checks for user being in allowed list and whether registered are checked properly.
