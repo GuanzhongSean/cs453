@@ -157,22 +157,39 @@ def attack(server_name):
         # This is a valid signature for server_3 within 2025-03
         data = b"4CDLg+B4MVuG/rkBmqtRDtGTarUvasgIp63berzp94l3O4iker8TjjV+bCToQwWHRT0NpDzTXSdvRR6gcFH0BQ=="
     else:
+        actions_log.append({
+            "args": ["attack", server_name],
+            "status": 404,
+            "error": "Server not found"
+        })
         return f"Server {server_name} not found. You can attack server_[1-3].\n", 404
 
     try:
         response = requests.post(url, data=data)
-        actions_log.append({
-            "args": ["attack", server_name],
-            "response": response.text,
-            "status": 200,
-            "message": "Attack successful"
-        })
         if response.status_code == 200:
+            actions_log.append({
+                "args": ["attack", server_name],
+                "response": response.text,
+                "status": 200,
+                "message": "Attack successful"
+            })
             return "Attack was successful!\n", 200
         else:
+            actions_log.append({
+                "args": ["attack", server_name],
+                "response": response.text,
+                "status": 403,
+                "error": "Attack failed"
+            })
             return "Attack failed!\n", 403
     except Exception as e:
         print(f"Error attacking server_1: {e}")
+        actions_log.append({
+            "args": ["attack", server_name],
+            "reason": str(e),
+            "status": 500,
+            "error": "Attack failed"
+        })
         return "Attack failed!\n", 500
 
 
