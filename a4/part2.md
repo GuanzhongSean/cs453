@@ -3,13 +3,13 @@
 ## 1. Dependencies
 
 ```bash
-pip install flask cryptography
+pip install flask cryptography requests
 ```
-
-**Dependencies**:
+Dependencies:
 
 - **Flask** (for the HTTP server)
 - **cryptography** (for parsing SSH keys and verifying Ed25519 signatures)
+- **requests** (for sending HTTP requests to other servers in part 3)
 
 ## 2. How to Run
 
@@ -22,7 +22,7 @@ python3 part2_server.py
 ### 3.1 `POST /register/<uid>`
 
 - **Allowed `uid`s**: `{"test1", "test2", "test3", "test4", "test5"}`.
-- **Body**: Should contain the user’s **OpenSSH-encoded Ed25519 public key** (e.g., `ssh-ed25519 AAAAC3... user@host`).
+- **Body**: Should contain the user’s OpenSSH-encoded Ed25519 public key (e.g., `ssh-ed25519 AAAAC3... user@host`).
 - If the user is already registered or the key is invalid, the server responds with a 403/404 error. Otherwise, it responds with “Registration successful.”.
 
 ### 3.2 `POST /login/<uid>`
@@ -47,7 +47,7 @@ python3 part2_server.py
    For `POST /login/<uid>`, the server calls `public_key.verify(signature, b"Authenticate")`. If it raises an exception, we respond with a 403 indicating “Signature verification failed.”
 
 4. **Testing**:
-   - We use the **`portal_a4.sh`** script to issue `register <testN>` and `login <testN>` requests.
+   - We use the `portal_a4.sh` script to issue `register <testN>` and `login <testN>` requests.
    - `register` generates a fresh Ed25519 key pair and sends the public key to `/register/...`.
    - `login` uses `generate_sig.py` to sign the message `Authenticate` with the corresponding private key, then sends that signature to `/login/...`.
 

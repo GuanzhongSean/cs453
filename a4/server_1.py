@@ -5,12 +5,18 @@ from cryptography.hazmat.primitives import serialization
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 1024  # 1KB
 SECRET_KEY = "supersecret"
-user_keys = {"test1": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFW9mz4qwMzpQvR/tKtt7hLARNuGkYjfCBqrj/oksiFJ naruto@assignment4",
-             "test2": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINdp4Fa3rpSGvT8P/kt6L5CoDaMsXj3FZfTf3DqApFaT naruto@assignment4",
-             "test3": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINFJ9/u73UkZhe7RPSucM99MPnrfS1VVpfSvKrzAFEbd naruto@assignment4",
-             "test4": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFNA17Coul03/KlnIYICKvPk0hwWSGdNEb2+/NT5LcSB naruto@assignment4",
-             "test5": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII6VDXGx2Zyug5p5V1u34IJ+lZWG94hYAuABgsod/IGj naruto@assignment4"
-             }
+user_keys = {
+    "test1":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFW9mz4qwMzpQvR/tKtt7hLARNuGkYjfCBqrj/oksiFJ naruto@assignment4",
+    "test2":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINdp4Fa3rpSGvT8P/kt6L5CoDaMsXj3FZfTf3DqApFaT naruto@assignment4",
+    "test3":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINFJ9/u73UkZhe7RPSucM99MPnrfS1VVpfSvKrzAFEbd naruto@assignment4",
+    "test4":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFNA17Coul03/KlnIYICKvPk0hwWSGdNEb2+/NT5LcSB naruto@assignment4",
+    "test5":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII6VDXGx2Zyug5p5V1u34IJ+lZWG94hYAuABgsod/IGj naruto@assignment4"
+}
 allowed_uids = {"test1", "test2", "test3", "test4", "test5"}
 
 actions_log = []

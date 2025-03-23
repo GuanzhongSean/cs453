@@ -7,12 +7,18 @@ import base64
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 1024
 SECRET_KEY = "supersecret"
-user_keys = {"test1": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINa28FkCEVlkeak57tSmdp680clF4gDouNTZzh21rDU0 kakashi@assignment4",
-             "test2": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJWXYJsSE2Nn84dE+ns1v7A5YFD2Eg35FLbfrl8b6xzF kakashi@assignment4",
-             "test3": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICftfCVCrZthekJm8rFFlfCsrd+LE0er2TQh0QiOXL5U kakashi@assignment4",
-             "test4": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSlBMk6C0Nn71g4J/oDtYL8VECDIR3mIZrIDYrD+rpU kakashi@assignment4",
-             "test5": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFpOHL7UnwJxhE4k5GwNRdUF+W9IWkhMNpAq6UmvMYNw kakashi@assignment4"
-             }
+user_keys = {
+    "test1":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINa28FkCEVlkeak57tSmdp680clF4gDouNTZzh21rDU0 kakashi@assignment4",
+    "test2":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJWXYJsSE2Nn84dE+ns1v7A5YFD2Eg35FLbfrl8b6xzF kakashi@assignment4",
+    "test3":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICftfCVCrZthekJm8rFFlfCsrd+LE0er2TQh0QiOXL5U kakashi@assignment4",
+    "test4":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSlBMk6C0Nn71g4J/oDtYL8VECDIR3mIZrIDYrD+rpU kakashi@assignment4",
+    "test5":
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFpOHL7UnwJxhE4k5GwNRdUF+W9IWkhMNpAq6UmvMYNw kakashi@assignment4"
+}
 allowed_uids = {"test1", "test2", "test3", "test4", "test5"}
 
 
